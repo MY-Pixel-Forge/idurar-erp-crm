@@ -1,4 +1,6 @@
-const search = async (Model, req, res) => {
+import type { Request, Response } from 'express';
+
+const search = async (Model: any, req: Request, res: Response) => {
   // console.log(req.query.fields)
   // if (req.query.q === undefined || req.query.q.trim() === '') {
   //   return res
@@ -10,12 +12,15 @@ const search = async (Model, req, res) => {
   //     })
   //     .end();
   // }
-  const fieldsArray = req.query.fields ? req.query.fields.split(',') : ['name'];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fieldsArray = (req as any).query.fields ? (req as any).query.fields.split(',') : ['name'];
 
-  const fields = { $or: [] };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fields: any = { $or: [] };
 
   for (const field of fieldsArray) {
-    fields.$or.push({ [field]: { $regex: new RegExp(req.query.q, 'i') } });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    fields.$or.push({ [field]: { $regex: new RegExp((req as any).query.q, 'i') } });
   }
   // console.log(fields)
 
@@ -45,4 +50,4 @@ const search = async (Model, req, res) => {
   }
 };
 
-module.exports = search;
+export default search;

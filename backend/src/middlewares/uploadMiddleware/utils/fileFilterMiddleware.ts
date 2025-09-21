@@ -1,5 +1,5 @@
-const fileFilterMiddleware = ({ type = 'default', mimetype }) => {
-  // array containing all the possible file types
+export type FileFilterParams = { type?: string; mimetype: string };
+const fileFilterMiddleware = ({ type = 'default', mimetype }: FileFilterParams): boolean => {
   const _fileType = [
     'image/jpeg',
     'image/png',
@@ -19,12 +19,10 @@ const fileFilterMiddleware = ({ type = 'default', mimetype }) => {
     'audio/mpeg',
     'video/webm',
   ];
-
   if (type === 'default') {
     return true;
   } else {
     let _flag = _fileType.includes(mimetype);
-
     if (type === 'image') {
       if (!mimetype.startsWith('image/')) {
         _flag = false;
@@ -46,9 +44,7 @@ const fileFilterMiddleware = ({ type = 'default', mimetype }) => {
         !mimetype.startsWith('text/') &&
         !mimetype.startsWith('application/vnd.ms-excel') &&
         !mimetype.startsWith('application/msword') &&
-        !mimetype.startsWith(
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        )
+        !mimetype.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document')
       ) {
         _flag = false;
       }
@@ -68,13 +64,8 @@ const fileFilterMiddleware = ({ type = 'default', mimetype }) => {
         _flag = false;
       }
     }
-
-    if (_flag) {
-      return true;
-    } else {
-      return false;
-    }
+    return _flag;
   }
 };
 
-module.exports = fileFilterMiddleware;
+export default fileFilterMiddleware;

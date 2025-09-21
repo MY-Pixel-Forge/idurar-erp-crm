@@ -1,8 +1,13 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import type { Request, Response } from 'express';
 
-const authUser = async (req, res, { user, databasePassword, password, UserPasswordModel }) => {
-  const isMatch = await bcrypt.compare(databasePassword.salt + password, databasePassword.password);
+const authUser = async (
+  req: Request,
+  res: Response,
+  { user, databasePassword, password, UserPasswordModel }: any
+) => {
+  const isMatch = await bcrypt.compare(databasePassword.salt + password, databasePassword.password as string);
 
   if (!isMatch)
     return res.status(403).json({
@@ -12,21 +17,11 @@ const authUser = async (req, res, { user, databasePassword, password, UserPasswo
     });
 
   if (isMatch === true) {
-    const token = jwt.sign(
-      {
-        id: user._id,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: req.body.remember ? 365 * 24 + 'h' : '24h' }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
+      expiresIn: (req as any).body.remember ? 365 * 24 + 'h' : '24h',
+    });
 
-    await UserPasswordModel.findOneAndUpdate(
-      { user: user._id },
-      { $push: { loggedSessions: token } },
-      {
-        new: true,
-      }
-    ).exec();
+    await UserPasswordModel.findOneAndUpdate({ user: user._id }, { $push: { loggedSessions: token } }, { new: true }).exec();
 
     // .cookie(`token_${user.cloud}`, token, {
     //     maxAge: req.body.remember ? 365 * 24 * 60 * 60 * 1000 : null,
@@ -60,4 +55,4 @@ const authUser = async (req, res, { user, databasePassword, password, UserPasswo
   }
 };
 
-module.exports = authUser;
+export default authUser;

@@ -1,10 +1,10 @@
-const express = require('express');
+import express, { Request, Response } from 'express';
+import path from 'path';
+import { isPathInside } from '../../utils/is-path-inside';
+
 const router = express.Router();
 
-const path = require('path');
-const { isPathInside } = require('../../utils/is-path-inside');
-
-router.route('/:subPath/:directory/:file').get(function (req, res) {
+router.route('/:subPath/:directory/:file').get(function (req: Request, res: Response) {
   try {
     const { subPath, directory, file } = req.params;
 
@@ -28,7 +28,7 @@ router.route('/:subPath/:directory/:file').get(function (req, res) {
       });
     }
 
-    return res.sendFile(absolutePath, (error) => {
+    return res.sendFile(absolutePath, (error: any) => {
       if (error) {
         return res.status(404).json({
           success: false,
@@ -41,10 +41,11 @@ router.route('/:subPath/:directory/:file').get(function (req, res) {
     return res.status(503).json({
       success: false,
       result: null,
-      message: error.message,
-      error: error,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      message: (error as any).message,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      error: error as any,
     });
   }
 });
-
-module.exports = router;
+export default router;

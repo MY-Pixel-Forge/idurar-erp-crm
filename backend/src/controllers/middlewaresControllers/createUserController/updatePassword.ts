@@ -1,14 +1,17 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const { generate: uniqueId } = require('shortid');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import { generate as uniqueId } from 'shortid';
+import type { Request, Response } from 'express';
 
-const updatePassword = async (userModel, req, res) => {
-  const UserPassword = mongoose.model(userModel + 'Password');
+const updatePassword = async (userModel: string, req: Request, res: Response) => {
+  const UserPassword = mongoose.model((userModel + 'Password') as any);
 
   const reqUserName = userModel.toLowerCase();
-  const userProfile = req[reqUserName];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const userProfile: any = (req as any)[reqUserName];
 
-  let { password } = req.body;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let { password } = (req as any).body;
 
   if (password.length < 8)
     return res.status(400).json({
@@ -59,4 +62,4 @@ const updatePassword = async (userModel, req, res) => {
   });
 };
 
-module.exports = updatePassword;
+export default updatePassword;

@@ -1,7 +1,8 @@
-const custom = require('@/controllers/pdfController');
-const mongoose = require('mongoose');
+import custom from '../../controllers/pdfController';
+import mongoose from 'mongoose';
+import { Request, Response } from 'express';
 
-module.exports = downloadPdf = async (req, res, { directory, id }) => {
+const downloadPdf = async (req: Request, res: Response, { directory, id }: { directory: string; id: string }) => {
   try {
     const modelName = directory.slice(0, 1).toUpperCase() + directory.slice(1);
     if (mongoose.models[modelName]) {
@@ -43,21 +44,21 @@ module.exports = downloadPdf = async (req, res, { directory, id }) => {
         message: `Model '${modelName}' does not exist`,
       });
     }
-  } catch (error) {
+  } catch (error: any) {
     // If error is thrown by Mongoose due to required validations
-    if (error.name == 'ValidationError') {
+    if (error?.name == 'ValidationError') {
       return res.status(400).json({
         success: false,
         result: null,
-        error: error.message,
+        error: error?.message,
         message: 'Required fields are not supplied',
       });
-    } else if (error.name == 'BSONTypeError') {
+    } else if (error?.name == 'BSONTypeError') {
       // If error is thrown by Mongoose due to invalid ID
       return res.status(400).json({
         success: false,
         result: null,
-        error: error.message,
+        error: error?.message,
         message: 'Invalid ID',
       });
     } else {
@@ -65,10 +66,12 @@ module.exports = downloadPdf = async (req, res, { directory, id }) => {
       return res.status(500).json({
         success: false,
         result: null,
-        error: error.message,
-        message: error.message,
+        error: error?.message,
+        message: error?.message,
         controller: 'downloadPDF.js',
       });
     }
   }
 };
+
+export default downloadPdf;

@@ -1,4 +1,6 @@
-const useDate = ({ settings }) => {
+type AppSettings = { [key: string]: any };
+
+const useDate = ({ settings }: { settings: AppSettings }) => {
   const { idurar_app_date_format } = settings;
 
   const dateFormat = idurar_app_date_format;
@@ -8,4 +10,4 @@ const useDate = ({ settings }) => {
   };
 };
 
-module.exports = useDate;
+export default useDate;

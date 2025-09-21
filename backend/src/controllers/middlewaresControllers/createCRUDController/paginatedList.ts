@@ -1,18 +1,26 @@
-const paginatedList = async (Model, req, res) => {
-  const page = req.query.page || 1;
-  const limit = parseInt(req.query.items) || 10;
+import type { Request, Response } from 'express';
+
+const paginatedList = async (Model: any, req: Request, res: Response) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const page = (req as any).query.page || 1;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const limit = parseInt((req as any).query.items) || 10;
   const skip = page * limit - limit;
 
-  const { sortBy = 'enabled', sortValue = -1, filter, equal } = req.query;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { sortBy = 'enabled', sortValue = -1, filter, equal } = (req as any).query as any;
 
-  const fieldsArray = req.query.fields ? req.query.fields.split(',') : [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fieldsArray: any[] = (req as any).query.fields ? (req as any).query.fields.split(',') : [];
 
-  let fields;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let fields: any;
 
   fields = fieldsArray.length === 0 ? {} : { $or: [] };
 
   for (const field of fieldsArray) {
-    fields.$or.push({ [field]: { $regex: new RegExp(req.query.q, 'i') } });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    fields.$or.push({ [field]: { $regex: new RegExp((req as any).query.q, 'i') } });
   }
 
   //  Query the database for a list of all results
@@ -60,4 +68,4 @@ const paginatedList = async (Model, req, res) => {
   }
 };
 
-module.exports = paginatedList;
+export default paginatedList;

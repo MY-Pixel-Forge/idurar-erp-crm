@@ -1,7 +1,9 @@
-const read = async (Model, req, res) => {
+import type { Request, Response } from 'express';
+
+const read = async (Model: any, req: Request, res: Response) => {
   // Find document by id
   const result = await Model.findOne({
-    _id: req.params.id,
+    _id: (req as any).params.id,
     removed: false,
   }).exec();
   // If no results found, return document not found
@@ -20,5 +22,4 @@ const read = async (Model, req, res) => {
     });
   }
 };
-
-module.exports = read;
+export default read;

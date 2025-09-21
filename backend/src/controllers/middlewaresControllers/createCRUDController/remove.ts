@@ -1,4 +1,6 @@
-const remove = async (Model, req, res) => {
+import type { Request, Response } from 'express';
+
+const remove = async (Model: any, req: Request, res: Response) => {
   // Find the document by id and delete it
   let updates = {
     removed: true,
@@ -6,7 +8,7 @@ const remove = async (Model, req, res) => {
   // Find the document by id and delete it
   const result = await Model.findOneAndUpdate(
     {
-      _id: req.params.id,
+      _id: (req as any).params.id,
     },
     { $set: updates },
     {
@@ -29,4 +31,4 @@ const remove = async (Model, req, res) => {
   }
 };
 
-module.exports = remove;
+export default remove;

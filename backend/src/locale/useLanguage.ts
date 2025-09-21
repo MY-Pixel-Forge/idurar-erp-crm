@@ -44,4 +44,4 @@ export const useLanguage: UseLanguageFunction = ({ selectedLang }) => {
   return translate;
 };
 
-module.exports = useLanguage;
+export default useLanguage;

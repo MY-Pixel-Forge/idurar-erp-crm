@@ -1,14 +1,16 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import { generate as uniqueId } from 'shortid';
+import type { Request, Response } from 'express';
 
-const { generate: uniqueId } = require('shortid');
-
-const updateProfilePassword = async (userModel, req, res) => {
-  const UserPassword = mongoose.model(userModel + 'Password');
+const updateProfilePassword = async (userModel: string, req: Request, res: Response) => {
+  const UserPassword = mongoose.model((userModel + 'Password') as any);
 
   const reqUserName = userModel.toLowerCase();
-  const userProfile = req[reqUserName];
-  let { password, passwordCheck } = req.body;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const userProfile: any = (req as any)[reqUserName];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let { password, passwordCheck } = (req as any).body;
 
   if (!password || !passwordCheck)
     return res.status(400).json({ msg: 'Not all fields have been entered.' });
@@ -62,4 +64,4 @@ const updateProfilePassword = async (userModel, req, res) => {
   });
 };
 
-module.exports = updateProfilePassword;
+export default updateProfilePassword;

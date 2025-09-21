@@ -1,39 +1,30 @@
-const { basename, extname } = require('path');
-const { globSync } = require('glob');
+import { basename, extname } from 'path';
+import { globSync } from 'glob';
 
-const appModelsFiles = globSync('./src/models/appModels/**/*.js');
+const appModelsFiles = globSync('./src/models/appModels/**/*.ts');
 
-const pattern = './src/models/**/*.js';
+const pattern = './src/models/**/*.ts';
 
-const modelsFiles = globSync(pattern).map((filePath) => {
+export const modelsFiles = globSync(pattern).map((filePath) => {
   const fileNameWithExtension = basename(filePath);
-  const fileNameWithoutExtension = fileNameWithExtension.replace(
-    extname(fileNameWithExtension),
-    ''
-  );
+  const fileNameWithoutExtension = fileNameWithExtension.replace(extname(fileNameWithExtension), '');
   return fileNameWithoutExtension;
 });
 
-const constrollersList = [];
-const appModelsList = [];
-const entityList = [];
-const routesList = [];
+export const constrollersList: string[] = [];
+export const appModelsList: string[] = [];
+export const entityList: string[] = [];
+export const routesList: Array<{ entity: string; modelName: string; controllerName: string }> = [];
 
 for (const filePath of appModelsFiles) {
   const fileNameWithExtension = basename(filePath);
-  const fileNameWithoutExtension = fileNameWithExtension.replace(
-    extname(fileNameWithExtension),
-    ''
-  );
+  const fileNameWithoutExtension = fileNameWithExtension.replace(extname(fileNameWithExtension), '');
   const firstChar = fileNameWithoutExtension.charAt(0);
   const modelName = fileNameWithoutExtension.replace(firstChar, firstChar.toUpperCase());
-  const fileNameLowerCaseFirstChar = fileNameWithoutExtension.replace(
-    firstChar,
-    firstChar.toLowerCase()
-  );
+  const fileNameLowerCaseFirstChar = fileNameWithoutExtension.replace(firstChar, firstChar.toLowerCase());
   const entity = fileNameWithoutExtension.toLowerCase();
 
-  controllerName = fileNameLowerCaseFirstChar + 'Controller';
+  const controllerName = fileNameLowerCaseFirstChar + 'Controller';
   constrollersList.push(controllerName);
   appModelsList.push(modelName);
   entityList.push(entity);
@@ -45,5 +36,3 @@ for (const filePath of appModelsFiles) {
   };
   routesList.push(route);
 }
-
-module.exports = { constrollersList, appModelsList, modelsFiles, entityList, routesList };

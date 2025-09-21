@@ -1,9 +1,5 @@
-const useDate = require('./useDate');
-const useMoney = require('./useMoney');
-const useAppSettings = require('./useAppSettings');
+import useDate from './useDate';
+import useMoney from './useMoney';
+import useAppSettings from './useAppSettings';
 
-module.exports = {
-  useDate,
-  useMoney,
-  useAppSettings,
-};
+export { useDate, useMoney, useAppSettings };

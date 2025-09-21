@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+
+import mongoose from 'mongoose';
 
 const updateProfile = async (userModel, req, res) => {
   const User = mongoose.model(userModel);
@@ -16,16 +17,16 @@ const updateProfile = async (userModel, req, res) => {
 
   let updates = req.body.photo
     ? {
-        email: req.body.email,
-        name: req.body.name,
-        surname: req.body.surname,
-        photo: req.body.photo,
-      }
+      email: req.body.email,
+      name: req.body.name,
+      surname: req.body.surname,
+      photo: req.body.photo,
+    }
     : {
-        email: req.body.email,
-        name: req.body.name,
-        surname: req.body.surname,
-      };
+      email: req.body.email,
+      name: req.body.name,
+      surname: req.body.surname,
+    };
   // Find document by id and updates with the required fields
   const result = await User.findOneAndUpdate(
     { _id: userProfile._id, removed: false },
@@ -57,4 +58,4 @@ const updateProfile = async (userModel, req, res) => {
   });
 };
 
-module.exports = updateProfile;
+export default updateProfile;

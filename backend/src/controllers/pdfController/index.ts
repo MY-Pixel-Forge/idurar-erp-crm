@@ -1,28 +1,28 @@
-const pug = require('pug');
-const fs = require('fs');
-const moment = require('moment');
-let pdf = require('html-pdf');
-const { listAllSettings, loadSettings } = require('@/middlewares/settings');
-const { getData } = require('@/middlewares/serverData');
-const useLanguage = require('@/locale/useLanguage');
-const { useMoney, useDate } = require('@/settings');
+import pug from 'pug';
+import fs from 'fs';
+import moment from 'moment';
+import pdf from 'html-pdf';
+import { listAllSettings, loadSettings } from '../../middlewares/settings';
+import { getData } from '../../middlewares/serverData';
+import useLanguage from '../../locale/useLanguage';
+import { useMoney, useDate } from '../../settings';
 
 const pugFiles = ['invoice', 'offer', 'quote', 'payment'];
 
 require('dotenv').config({ path: '.env' });
 require('dotenv').config({ path: '.env.local' });
 
-exports.generatePdf = async (
-  modelName,
-  info = { filename: 'pdf_file', format: 'A5', targetLocation: '' },
-  result,
-  callback
+export const generatePdf = async (
+  modelName: string,
+  info: { filename?: string; format?: string; targetLocation?: string } = { filename: 'pdf_file', format: 'A5', targetLocation: '' },
+  result: any,
+  callback?: () => void
 ) => {
   try {
     const { targetLocation } = info;
 
     // if PDF already exists, then delete it and create a new PDF
-    if (fs.existsSync(targetLocation)) {
+    if (targetLocation && fs.existsSync(targetLocation)) {
       fs.unlinkSync(targetLocation);
     }
 
@@ -42,7 +42,7 @@ exports.generatePdf = async (
         thousand_sep,
         cent_precision,
         zero_format,
-      } = settings;
+      } = settings as any;
 
       const { moneyFormatter } = useMoney({
         settings: {
@@ -73,12 +73,14 @@ exports.generatePdf = async (
           orientation: 'portrait',
           border: '10mm',
         })
-        .toFile(targetLocation, function (error) {
+        .toFile(targetLocation || '', function (error: any) {
           if (error) throw new Error(error);
           if (callback) callback();
         });
     }
-  } catch (error) {
-    throw new Error(error);
+  } catch (error: any) {
+    throw new Error(error?.message || 'PDF generation error');
   }
 };
+
+export default { generatePdf };

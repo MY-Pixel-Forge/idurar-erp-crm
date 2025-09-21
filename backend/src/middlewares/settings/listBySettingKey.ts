@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
 const Model = mongoose.model('Setting');
-const listBySettingKey = async ({ settingKeyArray = [] }) => {
+type ListBySettingKeyParams = { settingKeyArray?: string[] };
+const listBySettingKey = async ({ settingKeyArray = [] }: ListBySettingKeyParams) => {
   try {
-    const settingsToShow = { $or: [] };
+    const settingsToShow: { $or: { settingKey: string }[] } = { $or: [] };
     if (settingKeyArray.length === 0) {
       return [];
     }

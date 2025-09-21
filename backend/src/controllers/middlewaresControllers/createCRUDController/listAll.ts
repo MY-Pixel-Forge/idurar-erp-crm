@@ -1,6 +1,10 @@
-const listAll = async (Model, req, res) => {
-  const sort = req.query.sort || 'desc';
-  const enabled = req.query.enabled || undefined;
+import type { Request, Response } from 'express';
+
+const listAll = async (Model: any, req: Request, res: Response) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sort = (req as any).query.sort || 'desc';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const enabled = (req as any).query.enabled || undefined;
 
   //  Query the database for a list of all results
 
@@ -37,4 +41,4 @@ const listAll = async (Model, req, res) => {
   }
 };
 
-module.exports = listAll;
+export default listAll;

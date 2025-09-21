@@ -1,35 +1,47 @@
-const { modelsFiles } = require('@/models/utils');
+import { modelsFiles } from '../../../models/utils';
+import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
-const mongoose = require('mongoose');
+import create from './create';
+import read from './read';
+import update from './update';
+import remove from './remove';
+import search from './search';
+import filter from './filter';
+import summary from './summary';
+import listAll from './listAll';
+import paginatedList from './paginatedList';
 
-const create = require('./create');
-const read = require('./read');
-const update = require('./update');
-const remove = require('./remove');
-const search = require('./search');
-const filter = require('./filter');
-const summary = require('./summary');
-const listAll = require('./listAll');
-const paginatedList = require('./paginatedList');
+type CrudMethods = {
+  create: (req: Request, res: Response) => Promise<any> | any;
+  read: (req: Request, res: Response) => Promise<any> | any;
+  update: (req: Request, res: Response) => Promise<any> | any;
+  delete: (req: Request, res: Response) => Promise<any> | any;
+  list: (req: Request, res: Response) => Promise<any> | any;
+  listAll: (req: Request, res: Response) => Promise<any> | any;
+  search: (req: Request, res: Response) => Promise<any> | any;
+  filter: (req: Request, res: Response) => Promise<any> | any;
+  summary: (req: Request, res: Response) => Promise<any> | any;
+};
 
-const createCRUDController = (modelName) => {
+const createCRUDController = (modelName: string) => {
   if (!modelsFiles.includes(modelName)) {
     throw new Error(`Model ${modelName} does not exist`);
   }
 
-  const Model = mongoose.model(modelName);
-  let crudMethods = {
-    create: (req, res) => create(Model, req, res),
-    read: (req, res) => read(Model, req, res),
-    update: (req, res) => update(Model, req, res),
-    delete: (req, res) => remove(Model, req, res),
-    list: (req, res) => paginatedList(Model, req, res),
-    listAll: (req, res) => listAll(Model, req, res),
-    search: (req, res) => search(Model, req, res),
-    filter: (req, res) => filter(Model, req, res),
-    summary: (req, res) => summary(Model, req, res),
-  };
+  const Model = mongoose.model(modelName as any);
+  const crudMethods = {
+    create: (req: Request, res: Response) => create(Model, req, res),
+    read: (req: Request, res: Response) => read(Model, req, res),
+    update: (req: Request, res: Response) => update(Model, req, res),
+    delete: (req: Request, res: Response) => remove(Model, req, res),
+    list: (req: Request, res: Response) => paginatedList(Model, req, res),
+    listAll: (req: Request, res: Response) => listAll(Model, req, res),
+    search: (req: Request, res: Response) => search(Model, req, res),
+    filter: (req: Request, res: Response) => filter(Model, req, res),
+    summary: (req: Request, res: Response) => summary(Model, req, res),
+  } as CrudMethods;
   return crudMethods;
 };
 
-module.exports = createCRUDController;
+export default createCRUDController;

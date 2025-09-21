@@ -1,13 +1,15 @@
-const express = require('express');
 
-const { catchErrors } = require('@/handlers/errorHandlers');
+// ========== Types ==========
+import { Router, Request, Response, NextFunction } from 'express';
 
-const router = express.Router();
+// ========== Implementation ==========
+import express from 'express';
+import { catchErrors } from '../../handlers/errorHandlers';
+import adminController from '../../controllers/coreControllers/adminController';
+import settingController from '../../controllers/coreControllers/settingController';
+import { singleStorageUpload } from '../../middlewares/uploadMiddleware';
 
-const adminController = require('@/controllers/coreControllers/adminController');
-const settingController = require('@/controllers/coreControllers/settingController');
-
-const { singleStorageUpload } = require('@/middlewares/uploadMiddleware');
+const router: Router = express.Router();
 
 // //_______________________________ Admin management_______________________________
 

@@ -1,18 +1,18 @@
-const Joi = require('joi');
+import Joi from 'joi';
+import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
-const mongoose = require('mongoose');
+import checkAndCorrectURL from './checkAndCorrectURL';
+import sendMail from './sendMail';
+import { generate as shortidGenerate } from 'shortid';
+import { loadSettings } from '../../../middlewares/settings';
+import { useAppSettings } from '../../../settings';
 
-const checkAndCorrectURL = require('./checkAndCorrectURL');
-const sendMail = require('./sendMail');
-const shortid = require('shortid');
-const { loadSettings } = require('@/middlewares/settings');
-
-const { useAppSettings } = require('@/settings');
-
-const forgetPassword = async (req, res, { userModel }) => {
-  const UserPassword = mongoose.model(userModel + 'Password');
-  const User = mongoose.model(userModel);
-  const { email } = req.body;
+const forgetPassword = async (req: Request, res: Response, { userModel }: { userModel: string }) => {
+  const UserPassword = mongoose.model((userModel + 'Password') as any);
+  const User = mongoose.model(userModel as any);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { email } = (req as any).body;
 
   // validate
   const objectSchema = Joi.object({
@@ -43,7 +43,7 @@ const forgetPassword = async (req, res, { userModel }) => {
       message: 'No account with this email has been registered.',
     });
 
-  const resetToken = shortid.generate();
+  const resetToken = shortidGenerate();
   await UserPassword.findOneAndUpdate(
     { user: user._id },
     { resetToken },

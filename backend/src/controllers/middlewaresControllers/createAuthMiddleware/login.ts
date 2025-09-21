@@ -1,13 +1,14 @@
-const Joi = require('joi');
+import Joi from 'joi';
+import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
-const mongoose = require('mongoose');
+import authUser from './authUser';
 
-const authUser = require('./authUser');
-
-const login = async (req, res, { userModel }) => {
-  const UserPasswordModel = mongoose.model(userModel + 'Password');
-  const UserModel = mongoose.model(userModel);
-  const { email, password } = req.body;
+const login = async (req: Request, res: Response, { userModel }: { userModel: string }) => {
+  const UserPasswordModel = mongoose.model((userModel + 'Password') as any);
+  const UserModel = mongoose.model(userModel as any);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { email, password } = (req as any).body;
 
   // validate
   const objectSchema = Joi.object({
@@ -56,4 +57,4 @@ const login = async (req, res, { userModel }) => {
   });
 };
 
-module.exports = login;
+export default login;

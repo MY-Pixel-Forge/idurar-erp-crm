@@ -1,9 +1,9 @@
-exports.passwordVerfication = ({
+export const passwordVerfication = ({
   title = 'Reset your Password',
   name = '',
   link = '',
   time = new Date(),
-}) => {
+}: { title?: string; name?: string; link?: string; time?: Date }) => {
   return `
     <div>
 

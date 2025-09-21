@@ -1,8 +1,13 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
+import type { Request, Response, NextFunction } from 'express';
 
-const mongoose = require('mongoose');
-
-const isValidAuthToken = async (req, res, next, { userModel, jwtSecret = 'JWT_SECRET' }) => {
+const isValidAuthToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  { userModel, jwtSecret = 'JWT_SECRET' }: { userModel: string; jwtSecret?: string }
+) => {
   try {
     const UserPassword = mongoose.model(userModel + 'Password');
     const User = mongoose.model(userModel);
@@ -53,10 +58,11 @@ const isValidAuthToken = async (req, res, next, { userModel, jwtSecret = 'JWT_SE
       });
     else {
       const reqUserName = userModel.toLowerCase();
-      req[reqUserName] = user;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (req as any)[reqUserName] = user;
       next();
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(500).json({
       success: false,
       result: null,
@@ -68,4 +74,4 @@ const isValidAuthToken = async (req, res, next, { userModel, jwtSecret = 'JWT_SE
   }
 };
 
-module.exports = isValidAuthToken;
+export default isValidAuthToken;

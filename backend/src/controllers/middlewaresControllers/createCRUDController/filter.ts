@@ -1,5 +1,8 @@
-const filter = async (Model, req, res) => {
-  if (req.query.filter === undefined || req.query.equal === undefined) {
+import type { Request, Response } from 'express';
+
+const filter = async (Model: any, req: Request, res: Response) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ((req as any).query.filter === undefined || (req as any).query.equal === undefined) {
     return res.status(403).json({
       success: false,
       result: null,
@@ -9,8 +12,10 @@ const filter = async (Model, req, res) => {
   const result = await Model.find({
     removed: false,
   })
-    .where(req.query.filter)
-    .equals(req.query.equal)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .where((req as any).query.filter)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .equals((req as any).query.equal)
     .exec();
   if (!result) {
     return res.status(404).json({
@@ -28,4 +33,4 @@ const filter = async (Model, req, res) => {
   }
 };
 
-module.exports = filter;
+export default filter;

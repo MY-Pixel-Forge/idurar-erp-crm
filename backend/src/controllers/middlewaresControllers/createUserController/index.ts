@@ -1,19 +1,27 @@
-const read = require('./read');
-const updateProfile = require('./updateProfile');
+import type { Request, Response } from 'express';
 
-const updatePassword = require('./updatePassword');
-const updateProfilePassword = require('./updateProfilePassword');
+import read from './read';
+import updateProfile from './updateProfile';
+import updatePassword from './updatePassword';
+import updateProfilePassword from './updateProfilePassword';
 
-const createUserController = (userModel) => {
-  let userController = {};
+type UserController = {
+  updateProfile: (req: Request, res: Response) => Promise<any> | any;
+  updatePassword: (req: Request, res: Response) => Promise<any> | any;
+  updateProfilePassword: (req: Request, res: Response) => Promise<any> | any;
+  read: (req: Request, res: Response) => Promise<any> | any;
+};
 
-  userController.updateProfile = (req, res) => updateProfile(userModel, req, res);
-  userController.updatePassword = (req, res) => updatePassword(userModel, req, res);
-  userController.updateProfilePassword = (req, res) => updateProfilePassword(userModel, req, res);
+const createUserController = (userModel: string) => {
+  const userController = {} as UserController;
 
-  userController.read = (req, res) => read(userModel, req, res);
+  userController.updateProfile = (req: Request, res: Response) => updateProfile(userModel, req, res);
+  userController.updatePassword = (req: Request, res: Response) => updatePassword(userModel, req, res);
+  userController.updateProfilePassword = (req: Request, res: Response) => updateProfilePassword(userModel, req, res);
+
+  userController.read = (req: Request, res: Response) => read(userModel, req, res);
 
   return userController;
 };
 
-module.exports = createUserController;
+export default createUserController;

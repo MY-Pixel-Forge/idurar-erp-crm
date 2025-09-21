@@ -1,12 +1,15 @@
-const update = async (Model, req, res) => {
+import type { Request, Response } from 'express';
+
+const update = async (Model: any, req: Request, res: Response) => {
   // Find document by id and updates with the required fields
-  req.body.removed = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (req as any).body.removed = false;
   const result = await Model.findOneAndUpdate(
     {
-      _id: req.params.id,
+      _id: (req as any).params.id,
       removed: false,
     },
-    req.body,
+    (req as any).body,
     {
       new: true, // return the new result instead of the old one
       runValidators: true,
@@ -27,4 +30,4 @@ const update = async (Model, req, res) => {
   }
 };
 
-module.exports = update;
+export default update;

@@ -1,6 +1,8 @@
-const currency = require('currency.js');
+import currency from 'currency.js';
 
-const useMoney = ({ settings }) => {
+type AppSettings = { [key: string]: any };
+
+const useMoney = ({ settings }: { settings: AppSettings }) => {
   const {
     currency_symbol,
     currency_position,
@@ -10,30 +12,30 @@ const useMoney = ({ settings }) => {
     zero_format,
   } = settings;
 
-  function currencyFormat(amount) {
+  function currencyFormat(amount: number) {
     return currency(amount).dollars() > 0 || !zero_format
       ? currency(amount, {
-          separator: thousand_sep,
-          decimal: decimal_sep,
-          symbol: '',
-          precision: cent_precision,
-        }).format()
+        separator: thousand_sep,
+        decimal: decimal_sep,
+        symbol: '',
+        precision: cent_precision,
+      }).format()
       : 0 +
-          currency(amount, {
-            separator: thousand_sep,
-            decimal: decimal_sep,
-            symbol: '',
-            precision: cent_precision,
-          }).format();
+      currency(amount, {
+        separator: thousand_sep,
+        decimal: decimal_sep,
+        symbol: '',
+        precision: cent_precision,
+      }).format();
   }
 
-  function moneyFormatter({ amount = 0 }) {
+  function moneyFormatter({ amount = 0 }: { amount?: number }) {
     return currency_position === 'before'
       ? currency_symbol + ' ' + currencyFormat(amount)
       : currencyFormat(amount) + ' ' + currency_symbol;
   }
 
-  function amountFormatter({ amount = 0 }) {
+  function amountFormatter({ amount = 0 }: { amount?: number }) {
     return currencyFormat(amount);
   }
 
@@ -49,4 +51,4 @@ const useMoney = ({ settings }) => {
   };
 };
 
-module.exports = useMoney;
+export default useMoney;

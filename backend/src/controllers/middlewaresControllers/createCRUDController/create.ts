@@ -1,11 +1,15 @@
-const create = async (Model, req, res) => {
+import type { Request, Response } from 'express';
+
+const create = async (Model: any, req: Request, res: Response) => {
   // Creating a new document in the collection
-  req.body.removed = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (req as any).body.removed = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result = await new Model({
-    ...req.body,
+    ...(req as any).body,
   }).save();
 
-  // Returning successfull response
+  // Returning successful response
   return res.status(200).json({
     success: true,
     result,
@@ -13,4 +17,4 @@ const create = async (Model, req, res) => {
   });
 };
 
-module.exports = create;
+export default create;
