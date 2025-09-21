@@ -1,14 +1,15 @@
-const mongoose = require('mongoose');
-const moment = require('moment');
+import mongoose from 'mongoose';
+import moment from 'moment';
+import { Request, Response } from 'express';
 
-const Model = mongoose.model('Invoice');
+const Model = mongoose.model('Invoice') as any;
 
-const { loadSettings } = require('@/middlewares/settings');
+import { loadSettings } from '../../../middlewares/settings';
 
-const summary = async (req, res) => {
+const summary = async (req: Request, res: Response) => {
   let defaultType = 'month';
 
-  const { type } = req.query;
+  const { type } = req.query as { type?: string };
 
   const settings = await loadSettings();
 
@@ -25,8 +26,19 @@ const summary = async (req, res) => {
   }
 
   const currentDate = moment();
-  let startDate = currentDate.clone().startOf(defaultType);
-  let endDate = currentDate.clone().endOf(defaultType);
+  let startDate: any;
+  let endDate: any;
+  if (defaultType === 'week') {
+    startDate = currentDate.clone().startOf('week');
+    endDate = currentDate.clone().endOf('week');
+  } else if (defaultType === 'year') {
+    startDate = currentDate.clone().startOf('year');
+    endDate = currentDate.clone().endOf('year');
+  } else {
+    // month
+    startDate = currentDate.clone().startOf('month');
+    endDate = currentDate.clone().endOf('month');
+  }
 
   const statuses = ['draft', 'pending', 'overdue', 'paid', 'unpaid', 'partially'];
 
@@ -124,12 +136,12 @@ const summary = async (req, res) => {
     },
   ]);
 
-  let result = [];
+  let result: any[] = [];
 
-  const totalInvoices = response[0].totalInvoice ? response[0].totalInvoice[0] : 0;
-  const statusResult = response[0].statusCounts || [];
-  const paymentStatusResult = response[0].paymentStatusCounts || [];
-  const overdueResult = response[0].overdueCounts || [];
+  const totalInvoices: any = response[0].totalInvoice ? response[0].totalInvoice[0] : 0;
+  const statusResult: any[] = response[0].statusCounts || [];
+  const paymentStatusResult: any[] = response[0].paymentStatusCounts || [];
+  const overdueResult: any[] = response[0].overdueCounts || [];
 
   const statusResultMap = statusResult.map((item) => {
     return {
@@ -208,4 +220,4 @@ const summary = async (req, res) => {
   });
 };
 
-module.exports = summary;
+export default summary;

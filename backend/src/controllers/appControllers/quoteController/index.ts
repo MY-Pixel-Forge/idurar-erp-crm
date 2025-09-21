@@ -1,13 +1,13 @@
-const createCRUDController = require('@/controllers/middlewaresControllers/createCRUDController');
-const methods = createCRUDController('Quote');
+import createCRUDController from '../../middlewaresControllers/createCRUDController';
+const methods: any = createCRUDController('Quote');
 
-const sendMail = require('./sendMail');
-const create = require('./create');
-const summary = require('./summary');
-const update = require('./update');
-const convertQuoteToInvoice = require('./convertQuoteToInvoice');
-const paginatedList = require('./paginatedList');
-const read = require('./read');
+import sendMail from './sendMail';
+import create from './create';
+import summary from './summary';
+import update from './update';
+import convertQuoteToInvoice from './convertQuoteToInvoice';
+import paginatedList from './paginatedList';
+import read from './read';
 
 methods.list = paginatedList;
 methods.read = read;
@@ -18,4 +18,4 @@ methods.update = update;
 methods.convert = convertQuoteToInvoice;
 methods.summary = summary;
 
-module.exports = methods;
+export default methods;

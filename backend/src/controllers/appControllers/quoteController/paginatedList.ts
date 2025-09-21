@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const Model = mongoose.model('Quote');
 
-const paginatedList = async (req, res) => {
+const paginatedList = async (req: any, res: any) => {
   const page = req.query.page || 1;
   const limit = parseInt(req.query.items) || 10;
   const skip = page * limit - limit;
@@ -12,12 +12,12 @@ const paginatedList = async (req, res) => {
 
   const fieldsArray = req.query.fields ? req.query.fields.split(',') : [];
 
-  let fields;
+  let fields: any;
 
   fields = fieldsArray.length === 0 ? {} : { $or: [] };
 
   for (const field of fieldsArray) {
-    fields.$or.push({ [field]: { $regex: new RegExp(req.query.q, 'i') } });
+    (fields.$or as any[]).push({ [field]: { $regex: new RegExp(req.query.q, 'i') } });
   }
 
   //  Query the database for a list of all results
@@ -65,4 +65,4 @@ const paginatedList = async (req, res) => {
   }
 };
 
-module.exports = paginatedList;
+export default paginatedList;

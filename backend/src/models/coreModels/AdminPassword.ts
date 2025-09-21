@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 
 const AdminPasswordSchema = new Schema({
   removed: {
@@ -30,18 +30,18 @@ const AdminPasswordSchema = new Schema({
   loggedSessions: {
     type: [String],
     default: [],
-  },
+  }
 });
 
 // AdminPasswordSchema.index({ user: 1 });
 // generating a hash
-AdminPasswordSchema.methods.generateHash = function (salt, password) {
+AdminPasswordSchema.methods.generateHash = function (salt: string, password: string) {
   return bcrypt.hashSync(salt + password);
 };
 
 // checking if password is valid
-AdminPasswordSchema.methods.validPassword = function (salt, userpassword) {
+AdminPasswordSchema.methods.validPassword = function (salt: string, userpassword: string) {
   return bcrypt.compareSync(salt + userpassword, this.password);
 };
 
-module.exports = mongoose.model('AdminPassword', AdminPasswordSchema);
+export default mongoose.model('AdminPassword', AdminPasswordSchema);

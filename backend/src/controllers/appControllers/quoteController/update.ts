@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const Model = mongoose.model('Quote');
 
-const custom = require('@/controllers/pdfController');
+import custom from '../../../controllers/pdfController';
 
-const { calculate } = require('@/helpers');
+import { calculate } from '../../../helpers';
 
-const update = async (req, res) => {
+const update = async (req: any, res: any) => {
   const { items = [], taxRate = 0, discount = 0 } = req.body;
 
   if (items.length === 0) {
@@ -23,7 +23,7 @@ const update = async (req, res) => {
   // let credit = 0;
 
   //Calculate the items array with subTotal, total, taxTotal
-  items.map((item) => {
+  items.map((item: any) => {
     let total = calculate.multiply(item['quantity'], item['price']);
     //sub total
     subTotal = calculate.add(subTotal, total);
@@ -58,4 +58,5 @@ const update = async (req, res) => {
     message: 'we update this document ',
   });
 };
-module.exports = update;
+
+export default update;

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
   removed: {
@@ -30,6 +30,7 @@ const schema = new mongoose.Schema({
   },
 });
 
-schema.plugin(require('mongoose-autopopulate'));
+import mongooseAutopopulate from 'mongoose-autopopulate';
+schema.plugin(mongooseAutopopulate as any);
 
-module.exports = mongoose.model('Client', schema);
+export default mongoose.model('Client', schema);

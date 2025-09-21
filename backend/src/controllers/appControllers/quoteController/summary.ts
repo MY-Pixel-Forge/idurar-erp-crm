@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
-const moment = require('moment');
+import mongoose from 'mongoose';
+import moment from 'moment';
 
 const Model = mongoose.model('Quote');
-const { loadSettings } = require('@/middlewares/settings');
+import { loadSettings } from '../../../middlewares/settings';
 
-const summary = async (req, res) => {
+const summary = async (req: any, res: any) => {
   let defaultType = 'month';
 
   const { type } = req.query;
@@ -24,8 +24,9 @@ const summary = async (req, res) => {
   }
 
   const currentDate = moment();
-  let startDate = currentDate.clone().startOf(defaultType);
-  let endDate = currentDate.clone().endOf(defaultType);
+  // cast defaultType to any for moment startOf/endOf convenience
+  let startDate = currentDate.clone().startOf(defaultType as any);
+  let endDate = currentDate.clone().endOf(defaultType as any);
 
   const statuses = ['draft', 'pending', 'sent', 'expired', 'declined', 'accepted'];
 
@@ -109,4 +110,5 @@ const summary = async (req, res) => {
     message: `Successfully found all Quotations for the last ${defaultType}`,
   });
 };
-module.exports = summary;
+
+export default summary;

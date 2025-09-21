@@ -1,14 +1,24 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import { Request, Response } from 'express';
 
-const Model = mongoose.model('Invoice');
+const Model = mongoose.model('Invoice') as any;
 
-const custom = require('@/controllers/pdfController');
+import custom from '../../pdfController';
 
-const { calculate } = require('@/helpers');
-const schema = require('./schemaValidate');
+import { calculate } from '../../../helpers';
+import schema from './schemaValidate';
 
-const update = async (req, res) => {
-  let body = req.body;
+type InvoiceItem = {
+  _id?: string;
+  itemName: string;
+  description?: string;
+  quantity: number;
+  price: number;
+  total?: number;
+};
+
+const update = async (req: Request, res: Response) => {
+  let body: any = req.body;
 
   const { error, value } = schema.validate(body);
   if (error) {
@@ -27,7 +37,11 @@ const update = async (req, res) => {
 
   const { credit } = previousInvoice;
 
-  const { items = [], taxRate = 0, discount = 0 } = req.body;
+  const { items = [], taxRate = 0, discount = 0 } = req.body as {
+    items?: InvoiceItem[];
+    taxRate?: number;
+    discount?: number;
+  };
 
   if (items.length === 0) {
     return res.status(400).json({
@@ -43,7 +57,7 @@ const update = async (req, res) => {
   let total = 0;
 
   //Calculate the items array with subTotal, total, taxTotal
-  items.map((item) => {
+  items.map((item: InvoiceItem) => {
     let total = calculate.multiply(item['quantity'], item['price']);
     //sub total
     subTotal = calculate.add(subTotal, total);
@@ -80,4 +94,4 @@ const update = async (req, res) => {
   });
 };
 
-module.exports = update;
+export default update;

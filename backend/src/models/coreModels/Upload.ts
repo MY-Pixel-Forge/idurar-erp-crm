@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const uploadSchema = new mongoose.Schema({
   removed: {
@@ -70,4 +70,4 @@ const uploadSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Upload ', uploadSchema);
+export default mongoose.model('Upload', uploadSchema);

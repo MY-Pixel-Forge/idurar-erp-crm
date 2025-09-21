@@ -1,4 +1,4 @@
-const mail = async (req, res) => {
+const mail = async (req: any, res: any) => {
   return res.status(200).json({
     success: true,
     result: null,
@@ -6,4 +6,4 @@ const mail = async (req, res) => {
   });
 };
 
-module.exports = mail;
+export default mail;

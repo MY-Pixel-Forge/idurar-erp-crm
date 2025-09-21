@@ -1,9 +1,10 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import { Request, Response } from 'express';
 
-const Model = mongoose.model('Invoice');
-const ModelPayment = mongoose.model('Payment');
+const Model = mongoose.model('Invoice') as any;
+const ModelPayment = mongoose.model('Payment') as any;
 
-const remove = async (req, res) => {
+const remove = async (req: Request, res: Response) => {
   const deletedInvoice = await Model.findOneAndUpdate(
     {
       _id: req.params.id,
@@ -34,4 +35,4 @@ const remove = async (req, res) => {
   });
 };
 
-module.exports = remove;
+export default remove;

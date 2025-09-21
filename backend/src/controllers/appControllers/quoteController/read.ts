@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const Model = mongoose.model('Quote');
 
-const read = async (req, res) => {
+const read = async (req: any, res: any) => {
   // Find document by id
   const result = await Model.findOne({
     _id: req.params.id,
@@ -27,4 +27,4 @@ const read = async (req, res) => {
   }
 };
 
-module.exports = read;
+export default read;

@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const Model = mongoose.model('PaymentMode');
-const createCRUDController = require('@/controllers/middlewaresControllers/createCRUDController');
-const methods = createCRUDController('PaymentMode');
+import createCRUDController from '../../middlewaresControllers/createCRUDController';
+const methods: any = createCRUDController('PaymentMode');
 
 delete methods['delete'];
 
-methods.create = async (req, res) => {
+methods.create = async (req: any, res: any) => {
   const { isDefault } = req.body;
 
   if (isDefault) {
@@ -29,7 +29,7 @@ methods.create = async (req, res) => {
   });
 };
 
-methods.delete = async (req, res) => {
+methods.delete = async (req: any, res: any) => {
   return res.status(403).json({
     success: false,
     result: null,
@@ -37,7 +37,7 @@ methods.delete = async (req, res) => {
   });
 };
 
-methods.update = async (req, res) => {
+methods.update = async (req: any, res: any) => {
   const { id } = req.params;
   const paymentMode = await Model.findOne({
     _id: req.params.id,
@@ -77,5 +77,4 @@ methods.update = async (req, res) => {
     result,
   });
 };
-
-module.exports = methods;
+export default methods;

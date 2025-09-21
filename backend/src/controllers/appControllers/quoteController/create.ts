@@ -1,12 +1,11 @@
-const mongoose = require('mongoose');
-
+import mongoose from 'mongoose';
 const Model = mongoose.model('Quote');
 
-const custom = require('@/controllers/pdfController');
-const { increaseBySettingKey } = require('@/middlewares/settings');
-const { calculate } = require('@/helpers');
+import custom from '../../../controllers/pdfController';
+import { increaseBySettingKey } from '../../../middlewares/settings';
+import { calculate } from '../../../helpers';
 
-const create = async (req, res) => {
+const create = async (req: any, res: any) => {
   const { items = [], taxRate = 0, discount = 0 } = req.body;
 
   // default
@@ -16,7 +15,7 @@ const create = async (req, res) => {
   // let credit = 0;
 
   //Calculate the items array with subTotal, total, taxTotal
-  items.map((item) => {
+  items.map((item: any) => {
     let total = calculate.multiply(item['quantity'], item['price']);
     //sub total
     subTotal = calculate.add(subTotal, total);
@@ -57,4 +56,5 @@ const create = async (req, res) => {
     message: 'Quote created successfully',
   });
 };
-module.exports = create;
+
+export default create;

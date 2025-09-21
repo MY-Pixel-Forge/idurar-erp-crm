@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
   removed: {
@@ -28,4 +28,4 @@ const schema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Taxes', schema);
+export default mongoose.model('Taxes', schema);
