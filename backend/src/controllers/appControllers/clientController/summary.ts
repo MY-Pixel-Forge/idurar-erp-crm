@@ -1,11 +1,12 @@
-const mongoose = require('mongoose');
-const moment = require('moment');
+import mongoose from 'mongoose';
+import moment from 'moment';
+import { Request, Response } from 'express';
 
-const InvoiceModel = mongoose.model('Invoice');
+const InvoiceModel = mongoose.model('Invoice') as any;
 
-const summary = async (Model, req, res) => {
+const summary = async (Model: any, req: Request, res: Response) => {
   let defaultType = 'month';
-  const { type } = req.query;
+  const { type } = req.query as { type?: string };
 
   if (type && ['week', 'month', 'year'].includes(type)) {
     defaultType = type;
@@ -18,8 +19,18 @@ const summary = async (Model, req, res) => {
   }
 
   const currentDate = moment();
-  let startDate = currentDate.clone().startOf(defaultType);
-  let endDate = currentDate.clone().endOf(defaultType);
+  let startDate: any;
+  let endDate: any;
+  if (defaultType === 'week') {
+    startDate = currentDate.clone().startOf('week');
+    endDate = currentDate.clone().endOf('week');
+  } else if (defaultType === 'year') {
+    startDate = currentDate.clone().startOf('year');
+    endDate = currentDate.clone().endOf('year');
+  } else {
+    startDate = currentDate.clone().startOf('month');
+    endDate = currentDate.clone().endOf('month');
+  }
 
   const pipeline = [
     {
@@ -74,12 +85,12 @@ const summary = async (Model, req, res) => {
     },
   ];
 
-  const aggregationResult = await Model.aggregate(pipeline);
+  const aggregationResult: any[] = await Model.aggregate(pipeline);
 
-  const result = aggregationResult[0];
-  const totalClients = result.totalClients[0] ? result.totalClients[0].count : 0;
-  const totalNewClients = result.newClients[0] ? result.newClients[0].count : 0;
-  const activeClients = result.activeClients[0] ? result.activeClients[0].count : 0;
+  const result: any = aggregationResult[0] || {};
+  const totalClients = result.totalClients && result.totalClients[0] ? result.totalClients[0].count : 0;
+  const totalNewClients = result.newClients && result.newClients[0] ? result.newClients[0].count : 0;
+  const activeClients = result.activeClients && result.activeClients[0] ? result.activeClients[0].count : 0;
 
   const totalActiveClientsPercentage = totalClients > 0 ? (activeClients / totalClients) * 100 : 0;
   const totalNewClientsPercentage = totalClients > 0 ? (totalNewClients / totalClients) * 100 : 0;
@@ -94,4 +105,4 @@ const summary = async (Model, req, res) => {
   });
 };
 
-module.exports = summary;
+export default summary;

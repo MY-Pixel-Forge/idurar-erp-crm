@@ -1,9 +1,10 @@
 import { basename, extname } from 'path';
 import { globSync } from 'glob';
 
-const appModelsFiles = globSync('./src/models/appModels/**/*.ts');
+const isProduction = process.env.NODE_ENV === 'production';
+const appModelsFiles = globSync(isProduction ? './dist/models/appModels/**/*.js' : './src/models/appModels/**/*.ts');
 
-const pattern = './src/models/**/*.ts';
+const pattern = isProduction ? './dist/models/**/*.js' : './src/models/**/*.ts';
 
 export const modelsFiles = globSync(pattern).map((filePath) => {
   const fileNameWithExtension = basename(filePath);

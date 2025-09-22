@@ -1,5 +1,5 @@
-exports.SendInvoice = ({ title = 'Invoice from Idurar', name = '', time = new Date() }) => {
-  return `
+export const SendInvoice = ({ title = 'Invoice from Idurar', name = '', time = new Date() }: { title?: string; name?: string; time?: Date }) => {
+    return `
     <div>
 
         <head data-id="__react-email-head">
@@ -19,8 +19,8 @@ exports.SendInvoice = ({ title = 'Invoice from Idurar', name = '', time = new Da
     `;
 };
 
-exports.SendQuote = ({ title = 'Quote from Idurar', name = '', time = new Date() }) => {
-  return `
+export const SendQuote = ({ title = 'Quote from Idurar', name = '', time = new Date() }: { title?: string; name?: string; time?: Date }) => {
+    return `
     <div>
 
         <head data-id="__react-email-head">
@@ -40,8 +40,8 @@ exports.SendQuote = ({ title = 'Quote from Idurar', name = '', time = new Date()
     `;
 };
 
-exports.SendOffer = ({ title = 'Offer from Idurar', name = '', time = new Date() }) => {
-  return `
+export const SendOffer = ({ title = 'Offer from Idurar', name = '', time = new Date() }: { title?: string; name?: string; time?: Date }) => {
+    return `
     <div>
 
         <head data-id="__react-email-head">
@@ -61,12 +61,12 @@ exports.SendOffer = ({ title = 'Offer from Idurar', name = '', time = new Date()
     `;
 };
 
-exports.SendPaymentReceipt = ({
-  title = 'Payment Receipt from Idurar',
-  name = '',
-  time = new Date(),
-}) => {
-  return `
+export const SendPaymentReceipt = ({
+    title = 'Payment Receipt from Idurar',
+    name = '',
+    time = new Date(),
+}: { title?: string; name?: string; time?: Date }) => {
+    return `
     <div>
 
         <head data-id="__react-email-head">

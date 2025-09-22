@@ -1,5 +1,5 @@
 import createCRUDController from '../../middlewaresControllers/createCRUDController';
-const methods: any = createCRUDController('Quote');
+const methods: Record<string, any> = createCRUDController('Quote');
 
 import sendMail from './sendMail';
 import create from './create';

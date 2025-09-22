@@ -1,12 +1,13 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import { Request, Response } from 'express';
 
-const Model = mongoose.model('Payment');
-const Invoice = mongoose.model('Invoice');
-const custom = require('@/controllers/pdfController');
+const Model = mongoose.model('Payment') as any;
+const Invoice = mongoose.model('Invoice') as any;
+import custom from '../../pdfController';
 
-const { calculate } = require('@/helpers');
+import { calculate } from '../../../helpers';
 
-const update = async (req, res) => {
+const update = async (req: Request & any, res: Response) => {
   if (req.body.amount === 0) {
     return res.status(202).json({
       success: false,
@@ -41,8 +42,8 @@ const update = async (req, res) => {
     calculate.sub(total, discount) === calculate.add(previousCredit, changedAmount)
       ? 'paid'
       : calculate.add(previousCredit, changedAmount) > 0
-      ? 'partially'
-      : 'unpaid';
+        ? 'partially'
+        : 'unpaid';
 
   const updatedDate = new Date();
   const updates = {
@@ -83,4 +84,4 @@ const update = async (req, res) => {
   });
 };
 
-module.exports = update;
+export default update;

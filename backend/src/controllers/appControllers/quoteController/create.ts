@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
-const Model = mongoose.model('Quote');
+import type { Request, Response } from 'express';
+const Model = mongoose.model('Quote') as mongoose.Model<any>;
 
 import custom from '../../../controllers/pdfController';
 import { increaseBySettingKey } from '../../../middlewares/settings';
 import { calculate } from '../../../helpers';
 
-const create = async (req: any, res: any) => {
-  const { items = [], taxRate = 0, discount = 0 } = req.body;
+const create = async (req: Request, res: Response) => {
+  const { items = [], taxRate = 0, discount = 0 } = (req as any).body || {};
 
   // default
   let subTotal = 0;
@@ -25,13 +26,12 @@ const create = async (req: any, res: any) => {
   taxTotal = calculate.multiply(subTotal, taxRate / 100);
   total = calculate.add(subTotal, taxTotal);
 
-  let body = req.body;
-
+  const body = (req as any).body || {};
   body['subTotal'] = subTotal;
   body['taxTotal'] = taxTotal;
   body['total'] = total;
   body['items'] = items;
-  body['createdBy'] = req.admin._id;
+  body['createdBy'] = (req as any).admin._id;
 
   // Creating a new document in the collection
   const result = await new Model(body).save();

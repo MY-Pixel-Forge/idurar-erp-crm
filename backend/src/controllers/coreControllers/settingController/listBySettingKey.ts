@@ -1,13 +1,13 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
-const Model = mongoose.model('Setting');
+const Model = mongoose.model('Setting') as any;
 
-const listBySettingKey = async (req, res) => {
+const listBySettingKey = async (req: Request, res: Response) => {
   // Find document by id
+  const settingKeyArray = (req.query.settingKeyArray as any) ? (req.query.settingKeyArray as string).split(',') : [];
 
-  const settingKeyArray = req.query.settingKeyArray ? req.query.settingKeyArray.split(',') : [];
-
-  const settingsToShow = { $or: [] };
+  const settingsToShow: any = { $or: [] };
 
   if (settingKeyArray.length === 0) {
     return res
@@ -47,4 +47,4 @@ const listBySettingKey = async (req, res) => {
   }
 };
 
-module.exports = listBySettingKey;
+export default listBySettingKey;

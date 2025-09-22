@@ -1,13 +1,14 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const Joi = require('joi');
-const mongoose = require('mongoose');
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import Joi from 'joi';
+import mongoose from 'mongoose';
+import { Request, Response } from 'express';
 
-const shortid = require('shortid');
+import shortid from 'shortid';
 
-const resetPassword = async (req, res, { userModel }) => {
-  const UserPassword = mongoose.model(userModel + 'Password');
-  const User = mongoose.model(userModel);
+const resetPassword = async (req: Request & any, res: Response, { userModel }: { userModel: string }) => {
+  const UserPassword = mongoose.model((userModel + 'Password') as any) as any;
+  const User = mongoose.model(userModel as any) as any;
   const { password, userId, resetToken } = req.body;
 
   const databasePassword = await UserPassword.findOne({ user: userId, removed: false });
@@ -110,4 +111,4 @@ const resetPassword = async (req, res, { userModel }) => {
     });
 };
 
-module.exports = resetPassword;
+export default resetPassword;

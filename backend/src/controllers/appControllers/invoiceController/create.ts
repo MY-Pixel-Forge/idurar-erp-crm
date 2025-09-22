@@ -1,15 +1,16 @@
 import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
-const Model = mongoose.model('Invoice');
+const Model = mongoose.model('Invoice') as mongoose.Model<any>;
 
 import { calculate } from '../../../helpers';
 import { increaseBySettingKey } from '../../../middlewares/settings';
 import schema from './schemaValidate';
 
-const create = async (req: any, res: any) => {
-  let body = req.body;
+const create = async (req: Request, res: Response) => {
+  const bodyInput = (req as any).body || {};
 
-  const { error, value } = schema.validate(body);
+  const { error, value } = schema.validate(bodyInput);
   if (error) {
     const { details } = error;
     return res.status(400).json({
@@ -27,7 +28,7 @@ const create = async (req: any, res: any) => {
   let total = 0;
 
   //Calculate the items array with subTotal, total, taxTotal
-  items.map((item) => {
+  items.map((item: any) => {
     let total = calculate.multiply(item['quantity'], item['price']);
     //sub total
     subTotal = calculate.add(subTotal, total);
@@ -37,6 +38,7 @@ const create = async (req: any, res: any) => {
   taxTotal = calculate.multiply(subTotal, taxRate / 100);
   total = calculate.add(subTotal, taxTotal);
 
+  const body = { ...value } as any;
   body['subTotal'] = subTotal;
   body['taxTotal'] = taxTotal;
   body['total'] = total;
@@ -45,7 +47,7 @@ const create = async (req: any, res: any) => {
   let paymentStatus = calculate.sub(total, discount) === 0 ? 'paid' : 'unpaid';
 
   body['paymentStatus'] = paymentStatus;
-  body['createdBy'] = req.admin._id;
+  body['createdBy'] = (req as any).admin._id;
 
   // Creating a new document in the collection
   const result = await new Model(body).save();

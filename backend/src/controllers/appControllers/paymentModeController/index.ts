@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
-const Model = mongoose.model('PaymentMode');
+import type { Request, Response } from 'express';
+const Model = mongoose.model('PaymentMode') as mongoose.Model<any>;
 import createCRUDController from '../../middlewaresControllers/createCRUDController';
-const methods: any = createCRUDController('PaymentMode');
+const methods: Record<string, any> = createCRUDController('PaymentMode');
 
 delete methods['delete'];
 
-methods.create = async (req: any, res: any) => {
-  const { isDefault } = req.body;
+methods.create = async (req: Request, res: Response) => {
+  const { isDefault } = (req as any).body;
 
   if (isDefault) {
     await Model.updateMany({}, { isDefault: false });
@@ -16,11 +17,8 @@ methods.create = async (req: any, res: any) => {
     isDefault: true,
   });
 
-  const result = await new Model({
-    ...req.body,
-
-    isDefault: countDefault < 1 ? true : false,
-  }).save();
+  const body = (req as any).body || {};
+  const result = await new Model({ ...body, isDefault: countDefault < 1 ? true : false }).save();
 
   return res.status(200).json({
     success: true,
@@ -29,7 +27,7 @@ methods.create = async (req: any, res: any) => {
   });
 };
 
-methods.delete = async (req: any, res: any) => {
+methods.delete = async (req: Request, res: Response) => {
   return res.status(403).json({
     success: false,
     result: null,
@@ -37,13 +35,10 @@ methods.delete = async (req: any, res: any) => {
   });
 };
 
-methods.update = async (req: any, res: any) => {
+methods.update = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const paymentMode = await Model.findOne({
-    _id: req.params.id,
-    removed: false,
-  }).exec();
-  const { isDefault = paymentMode.isDefault, enabled = paymentMode.enabled } = req.body;
+  const paymentMode = await Model.findOne({ _id: req.params.id, removed: false }).exec();
+  const { isDefault = (paymentMode as any)?.isDefault, enabled = (paymentMode as any)?.enabled } = (req as any).body || {};
 
   // if isDefault:false , we update first - isDefault:true
   // if enabled:false and isDefault:true , we update first - isDefault:true
@@ -67,7 +62,7 @@ methods.update = async (req: any, res: any) => {
     });
   }
 
-  const result = await Model.findOneAndUpdate({ _id: id }, req.body, {
+  const result = await Model.findOneAndUpdate({ _id: id }, (req as any).body || {}, {
     new: true,
   });
 

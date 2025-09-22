@@ -1,11 +1,10 @@
 import type { Request, Response } from 'express';
+import type mongoose from 'mongoose';
 
-const read = async (Model: any, req: Request, res: Response) => {
+const read = async (Model: mongoose.Model<any>, req: Request, res: Response) => {
   // Find document by id
-  const result = await Model.findOne({
-    _id: (req as any).params.id,
-    removed: false,
-  }).exec();
+  const id = (req.params as any).id;
+  const result = await Model.findOne({ _id: id, removed: false }).exec();
   // If no results found, return document not found
   if (!result) {
     return res.status(404).json({

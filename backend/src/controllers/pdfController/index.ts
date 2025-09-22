@@ -6,11 +6,12 @@ import { listAllSettings, loadSettings } from '../../middlewares/settings';
 import { getData } from '../../middlewares/serverData';
 import useLanguage from '../../locale/useLanguage';
 import { useMoney, useDate } from '../../settings';
+import dotenv from 'dotenv';
 
 const pugFiles = ['invoice', 'offer', 'quote', 'payment'];
 
-require('dotenv').config({ path: '.env' });
-require('dotenv').config({ path: '.env.local' });
+dotenv.config({ path: '.env' });
+dotenv.config({ path: '.env.local' });
 
 export const generatePdf = async (
   modelName: string,

@@ -1,8 +1,9 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
-const Model = mongoose.model('Setting');
+const Model = mongoose.model('Setting') as any;
 
-const updateManySetting = async (req, res) => {
+const updateManySetting = async (req: Request, res: Response) => {
   // req/body = [{settingKey:"",settingValue}]
   let settingsHasError = false;
   const updateDataArray = [];
@@ -55,4 +56,4 @@ const updateManySetting = async (req, res) => {
   }
 };
 
-module.exports = updateManySetting;
+export default updateManySetting;

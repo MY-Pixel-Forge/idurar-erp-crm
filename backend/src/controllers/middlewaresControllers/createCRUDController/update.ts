@@ -1,33 +1,29 @@
 import type { Request, Response } from 'express';
+import type mongoose from 'mongoose';
 
-const update = async (Model: any, req: Request, res: Response) => {
-  // Find document by id and updates with the required fields
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (req as any).body.removed = false;
+const update = async (Model: mongoose.Model<any>, req: Request, res: Response) => {
+  const body = ((req as any).body || {}) as Record<string, any>;
+  body.removed = false;
+  const id = (req.params as any).id as string;
   const result = await Model.findOneAndUpdate(
-    {
-      _id: (req as any).params.id,
-      removed: false,
-    },
-    (req as any).body,
-    {
-      new: true, // return the new result instead of the old one
-      runValidators: true,
-    }
+    { _id: id, removed: false },
+    body,
+    { new: true, runValidators: true }
   ).exec();
+
   if (!result) {
     return res.status(404).json({
       success: false,
       result: null,
       message: 'No document found ',
     });
-  } else {
-    return res.status(200).json({
-      success: true,
-      result,
-      message: 'we update this document ',
-    });
   }
+
+  return res.status(200).json({
+    success: true,
+    result,
+    message: 'we update this document ',
+  });
 };
 
 export default update;

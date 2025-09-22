@@ -1,20 +1,14 @@
 import type { Request, Response } from 'express';
+import type mongoose from 'mongoose';
 
-const remove = async (Model: any, req: Request, res: Response) => {
+const remove = async (Model: mongoose.Model<any>, req: Request, res: Response) => {
   // Find the document by id and delete it
   let updates = {
     removed: true,
   };
   // Find the document by id and delete it
-  const result = await Model.findOneAndUpdate(
-    {
-      _id: (req as any).params.id,
-    },
-    { $set: updates },
-    {
-      new: true, // return the new result instead of the old one
-    }
-  ).exec();
+  const id = (req.params as any).id;
+  const result = await Model.findOneAndUpdate({ _id: id }, { $set: updates }, { new: true }).exec();
   // If no results found, return document not found
   if (!result) {
     return res.status(404).json({

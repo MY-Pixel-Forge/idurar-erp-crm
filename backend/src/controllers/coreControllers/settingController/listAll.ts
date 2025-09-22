@@ -1,8 +1,10 @@
-const mongoose = require('mongoose');
-const Model = mongoose.model('Setting');
+import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
-const listAll = async (req, res) => {
-  const sort = parseInt(req.query.sort) || 'desc';
+const Model = mongoose.model('Setting') as any;
+
+const listAll = async (req: Request, res: Response) => {
+  const sort = parseInt(req.query.sort as any) || 'desc';
 
   //  Query the database for a list of all results
   const result = await Model.find({
@@ -25,4 +27,4 @@ const listAll = async (req, res) => {
   }
 };
 
-module.exports = listAll;
+export default listAll;

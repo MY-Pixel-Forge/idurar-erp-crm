@@ -1,12 +1,14 @@
-const mongoose = require('mongoose');
-const Model = mongoose.model('Taxes');
-const createCRUDController = require('@/controllers/middlewaresControllers/createCRUDController');
-const methods = createCRUDController('Taxes');
+import mongoose from 'mongoose';
+import { Request, Response } from 'express';
+
+const Model = mongoose.model('Taxes') as mongoose.Model<any>;
+import createCRUDController from '../../middlewaresControllers/createCRUDController';
+const methods: Record<string, any> = createCRUDController('Taxes');
 
 delete methods['delete'];
 
-methods.create = async (req, res) => {
-  const { isDefault } = req.body;
+methods.create = async (req: Request, res: Response) => {
+  const { isDefault } = (req as any).body || {};
 
   if (isDefault) {
     await Model.updateMany({}, { isDefault: false });
@@ -16,11 +18,8 @@ methods.create = async (req, res) => {
     isDefault: true,
   });
 
-  const result = await new Model({
-    ...req.body,
-
-    isDefault: countDefault < 1 ? true : false,
-  }).save();
+  const body = (req as any).body || {};
+  const result = await new Model({ ...body, isDefault: countDefault < 1 ? true : false }).save();
 
   return res.status(200).json({
     success: true,
@@ -29,7 +28,7 @@ methods.create = async (req, res) => {
   });
 };
 
-methods.delete = async (req, res) => {
+methods.delete = async (req: Request, res: Response) => {
   return res.status(403).json({
     success: false,
     result: null,
@@ -37,13 +36,10 @@ methods.delete = async (req, res) => {
   });
 };
 
-methods.update = async (req, res) => {
+methods.update = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const tax = await Model.findOne({
-    _id: req.params.id,
-    removed: false,
-  }).exec();
-  const { isDefault = tax.isDefault, enabled = tax.enabled } = req.body;
+  const tax = await Model.findOne({ _id: req.params.id, removed: false }).exec();
+  const { isDefault = (tax as any)?.isDefault, enabled = (tax as any)?.enabled } = (req as any).body || {};
 
   // if isDefault:false , we update first - isDefault:true
   // if enabled:false and isDefault:true , we update first - isDefault:true
@@ -67,7 +63,7 @@ methods.update = async (req, res) => {
     });
   }
 
-  const result = await Model.findOneAndUpdate({ _id: id }, req.body, {
+  const result = await Model.findOneAndUpdate({ _id: id }, (req as any).body || {}, {
     new: true,
   });
 
@@ -78,4 +74,4 @@ methods.update = async (req, res) => {
   });
 };
 
-module.exports = methods;
+export default methods;

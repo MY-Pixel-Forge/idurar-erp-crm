@@ -1,13 +1,14 @@
 import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
-const Model = mongoose.model('Quote');
+const Model = mongoose.model('Quote') as mongoose.Model<any>;
 
 import custom from '../../../controllers/pdfController';
 
 import { calculate } from '../../../helpers';
 
-const update = async (req: any, res: any) => {
-  const { items = [], taxRate = 0, discount = 0 } = req.body;
+const update = async (req: Request, res: Response) => {
+  const { items = [], taxRate = 0, discount = 0 } = (req as any).body || {};
 
   if (items.length === 0) {
     return res.status(400).json({
@@ -33,7 +34,7 @@ const update = async (req: any, res: any) => {
   taxTotal = calculate.multiply(subTotal, taxRate / 100);
   total = calculate.add(subTotal, taxTotal);
 
-  let body = req.body;
+  const body = (req as any).body || {};
 
   body['subTotal'] = subTotal;
   body['taxTotal'] = taxTotal;

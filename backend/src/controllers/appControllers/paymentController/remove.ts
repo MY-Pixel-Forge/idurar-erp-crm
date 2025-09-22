@@ -1,9 +1,10 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import { Request, Response } from 'express';
 
-const Model = mongoose.model('Payment');
-const Invoice = mongoose.model('Invoice');
+const Model = mongoose.model('Payment') as any;
+const Invoice = mongoose.model('Invoice') as any;
 
-const remove = async (req, res) => {
+const remove = async (req: Request & any, res: Response) => {
   // Find document by id and updates with the required fields
   const previousPayment = await Model.findOne({
     _id: req.params.id,
@@ -39,8 +40,8 @@ const remove = async (req, res) => {
     total - discount === previousCredit - previousAmount
       ? 'paid'
       : previousCredit - previousAmount > 0
-      ? 'partially'
-      : 'unpaid';
+        ? 'partially'
+        : 'unpaid';
 
   const updateInvoice = await Invoice.findOneAndUpdate(
     { _id: invoiceId },
@@ -64,4 +65,5 @@ const remove = async (req, res) => {
     message: 'Successfully Deleted the document ',
   });
 };
-module.exports = remove;
+
+export default remove;

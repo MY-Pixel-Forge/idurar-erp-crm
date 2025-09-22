@@ -1,20 +1,19 @@
-const express = require('express');
+import express from 'express';
+import cors from 'cors';
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
 
-const cors = require('cors');
-const compression = require('compression');
+import coreAuthRouter from './routes/coreRoutes/coreAuth';
+import coreApiRouter from './routes/coreRoutes/coreApi';
+import coreDownloadRouter from './routes/coreRoutes/coreDownloadRouter';
+import corePublicRouter from './routes/coreRoutes/corePublicRouter';
+import adminAuth from './controllers/coreControllers/adminAuth';
 
-const cookieParser = require('cookie-parser');
+import { catchErrors, notFound, developmentErrors, productionErrors } from './handlers/errorHandlers';
+import erpApiRouter from './routes/appRoutes/appApi';
 
-const coreAuthRouter = require('./routes/coreRoutes/coreAuth');
-const coreApiRouter = require('./routes/coreRoutes/coreApi');
-const coreDownloadRouter = require('./routes/coreRoutes/coreDownloadRouter');
-const corePublicRouter = require('./routes/coreRoutes/corePublicRouter');
-const adminAuth = require('./controllers/coreControllers/adminAuth');
+import fileUpload from 'express-fileupload';
 
-const errorHandlers = require('./handlers/errorHandlers');
-const erpApiRouter = require('./routes/appRoutes/appApi');
-
-const fileUpload = require('express-fileupload');
 // create our Express app
 const app = express();
 
@@ -37,16 +36,15 @@ app.use(compression());
 // Here our API Routes
 
 app.use('/api', coreAuthRouter);
-app.use('/api', adminAuth.isValidAuthToken, coreApiRouter);
-app.use('/api', adminAuth.isValidAuthToken, erpApiRouter);
+app.use('/api', (adminAuth as any).isValidAuthToken, coreApiRouter);
+app.use('/api', (adminAuth as any).isValidAuthToken, erpApiRouter);
 app.use('/download', coreDownloadRouter);
 app.use('/public', corePublicRouter);
 
 // If that above routes didnt work, we 404 them and forward to error handler
-app.use(errorHandlers.notFound);
+app.use(notFound);
 
 // production error handler
-app.use(errorHandlers.productionErrors);
+app.use(productionErrors);
 
-// done! we export it so we can start the site in start.js
-module.exports = app;
+export default app;

@@ -1,12 +1,14 @@
-require('dotenv').config({ path: '.env' });
-require('dotenv').config({ path: '.env.local' });
-const { globSync } = require('glob');
-const fs = require('fs');
-const { generate: uniqueId } = require('shortid');
+import 'dotenv/config';
+import 'dotenv/config';
+import { globSync } from 'glob';
+import fs from 'fs';
+import { generate as uniqueId } from 'shortid';
 
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
+import Joi from 'joi';
 
-const setup = async (req, res) => {
+const setup = async (req: Request, res: Response) => {
   const Admin = mongoose.model('Admin');
   const AdminPassword = mongoose.model('AdminPassword');
   const Setting = mongoose.model('Setting');
@@ -61,9 +63,9 @@ const setup = async (req, res) => {
   const settingsFiles = globSync('./src/setup/defaultSettings/**/*.json');
 
   for (const filePath of settingsFiles) {
-    const file = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    const file: any[] = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
-    const settingsToUpdate = {
+    const settingsToUpdate: Record<string, any> = {
       idurar_app_email: email,
       idurar_app_company_email: email,
       idurar_app_timezone: timezone,
@@ -71,7 +73,7 @@ const setup = async (req, res) => {
       idurar_app_language: language || 'en_us',
     };
 
-    const newSettings = file.map((x) => {
+    const newSettings = file.map((x: any) => {
       const settingValue = settingsToUpdate[x.settingKey];
       return settingValue ? { ...x, settingValue } : { ...x };
     });
@@ -98,4 +100,4 @@ const setup = async (req, res) => {
   });
 };
 
-module.exports = setup;
+export default setup;

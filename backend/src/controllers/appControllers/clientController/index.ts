@@ -1,14 +1,14 @@
-const mongoose = require('mongoose');
-const createCRUDController = require('@/controllers/middlewaresControllers/createCRUDController');
-
-const summary = require('./summary');
+import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
+import createCRUDController from '../../middlewaresControllers/createCRUDController';
+import summary from './summary';
 
 function modelController() {
-  const Model = mongoose.model('Client');
-  const methods = createCRUDController('Client');
+  const Model = mongoose.model('Client') as mongoose.Model<any>;
+  const methods: Record<string, any> = createCRUDController('Client');
 
-  methods.summary = (req, res) => summary(Model, req, res);
+  methods.summary = (req: Request, res: Response) => summary(Model, req, res);
   return methods;
 }
 
-module.exports = modelController();
+export default modelController();

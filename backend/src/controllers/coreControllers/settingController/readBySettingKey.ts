@@ -1,8 +1,9 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
-const Model = mongoose.model('Setting');
+const Model = mongoose.model('Setting') as any;
 
-const readBySettingKey = async (req, res) => {
+const readBySettingKey = async (req: Request, res: Response) => {
   // Find document by id
   const settingKey = req.params.settingKey || undefined;
 
@@ -35,4 +36,4 @@ const readBySettingKey = async (req, res) => {
   }
 };
 
-module.exports = readBySettingKey;
+export default readBySettingKey;

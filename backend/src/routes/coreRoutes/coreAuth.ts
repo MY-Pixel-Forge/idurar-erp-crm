@@ -1,15 +1,14 @@
-const express = require('express');
+import express from 'express';
+import { catchErrors } from '../../handlers/errorHandlers';
+import adminAuth from '../../controllers/coreControllers/adminAuth';
 
 const router = express.Router();
-
-const { catchErrors } = require('@/handlers/errorHandlers');
-const adminAuth = require('@/controllers/coreControllers/adminAuth');
 
 router.route('/login').post(catchErrors(adminAuth.login));
 
 router.route('/forgetpassword').post(catchErrors(adminAuth.forgetPassword));
 router.route('/resetpassword').post(catchErrors(adminAuth.resetPassword));
 
-router.route('/logout').post(adminAuth.isValidAuthToken, catchErrors(adminAuth.logout));
+router.route('/logout').post((adminAuth as any).isValidAuthToken, catchErrors((adminAuth as any).logout));
 
-module.exports = router;
+export default router;

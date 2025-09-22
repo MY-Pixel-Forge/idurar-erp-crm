@@ -4,3 +4,7 @@ declare module 'html-pdf';
 declare module 'jsonwebtoken';
 declare module 'pug';
 declare module 'currency.js';
+declare module 'cors';
+declare module 'compression';
+declare module 'cookie-parser';
+declare module 'express-fileupload';

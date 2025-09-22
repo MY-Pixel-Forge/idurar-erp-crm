@@ -6,6 +6,7 @@ export type UseLanguageFunction = (params: { selectedLang: string }) => (value: 
 
 // ========== Implementation ==========
 import { readBySettingKey } from '../middlewares/settings';
+import en_us from './translation/en_us';
 
 export const getLabel: GetLabelFunction = (lang, key) => {
   try {
@@ -29,10 +30,8 @@ export const getLabel: GetLabelFunction = (lang, key) => {
 };
 
 export const useSelector: UseSelectorFunction = () => {
-  const defaultfilePath = `./translation/en_us`;
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const langFile = require(defaultfilePath);
-  return langFile;
+  // default to bundled english translations
+  return en_us;
 };
 
 export const useLanguage: UseLanguageFunction = ({ selectedLang }) => {

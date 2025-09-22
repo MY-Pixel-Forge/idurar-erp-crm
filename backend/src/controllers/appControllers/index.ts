@@ -1,38 +1,42 @@
-const createCRUDController = require('@/controllers/middlewaresControllers/createCRUDController');
-const { routesList } = require('@/models/utils');
+import createCRUDController from '../middlewaresControllers/createCRUDController';
+import { routesList } from '../../models/utils';
 
-const { globSync } = require('glob');
-const path = require('path');
+import { globSync } from 'glob';
+import path from 'path';
 
+// Pattern to locate controller directories (each controller should export handlers)
 const pattern = './src/controllers/appControllers/*/**/';
-const controllerDirectories = globSync(pattern).map((filePath) => {
-  return path.basename(filePath);
-});
+const controllerPaths = globSync(pattern);
 
-const appControllers = () => {
-  const controllers = {};
-  const hasCustomControllers = [];
+// controllers keyed by controllerName; each controller exposes CRUD handlers
+const controllers: Record<string, Record<string, (...args: any[]) => any>> = {};
+const hasCustomControllers: string[] = [];
 
-  controllerDirectories.forEach((controllerName) => {
-    try {
-      const customController = require('@/controllers/appControllers/' + controllerName);
-
+// Start loading custom controllers asynchronously. We intentionally do not await
+// imports here so startup remains fast; routes will look up handlers at request time.
+for (const controllerPath of controllerPaths) {
+  const controllerName = path.basename(controllerPath);
+  // import the controller's index file if present
+  const controllerIndex = path.resolve(controllerPath, 'index.ts');
+  import(controllerIndex)
+    .then((mod) => {
+      const customController = (mod as any)?.default || (mod as any);
       if (customController) {
         hasCustomControllers.push(controllerName);
         controllers[controllerName] = customController;
       }
-    } catch (err) {
-      throw new Error(err.message);
-    }
-  });
+    })
+    .catch((err) => {
+      // Log and continue; missing or broken controller modules will be ignored
+      console.error('Failed loading controller:', controllerPath, err?.message || err);
+    });
+}
 
-  routesList.forEach(({ modelName, controllerName }) => {
-    if (!hasCustomControllers.includes(controllerName)) {
-      controllers[controllerName] = createCRUDController(modelName);
-    }
-  });
+// Provide default CRUD controllers for models that don't have a custom controller
+routesList.forEach(({ modelName, controllerName }) => {
+  if (!hasCustomControllers.includes(controllerName)) {
+    controllers[controllerName] = createCRUDController(modelName);
+  }
+});
 
-  return controllers;
-};
-
-module.exports = appControllers();
+export default controllers;

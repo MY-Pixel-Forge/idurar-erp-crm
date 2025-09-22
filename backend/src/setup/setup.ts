@@ -1,16 +1,27 @@
-require('dotenv').config({ path: '.env' });
-require('dotenv').config({ path: '.env.local' });
-const { globSync } = require('glob');
-const fs = require('fs');
-const { generate: uniqueId } = require('shortid');
+import dotenv from 'dotenv';
+import { globSync } from 'glob';
+import fs from 'fs';
+import { generate as uniqueId } from 'shortid';
+import mongoose from 'mongoose';
+import path from 'path';
+import { pathToFileURL } from 'url';
 
-const mongoose = require('mongoose');
-mongoose.connect(process.env.DATABASE);
+dotenv.config({ path: '.env' });
+dotenv.config({ path: '.env.local' });
+
+mongoose.connect(process.env.DATABASE as string);
 
 async function setupApp() {
   try {
-    const Admin = require('../models/coreModels/Admin');
-    const AdminPassword = require('../models/coreModels/AdminPassword');
+    // load models dynamically to avoid circular import during setup
+    const isProduction = process.env.NODE_ENV === 'production';
+    const adminFile = isProduction ? path.resolve('./dist/models/coreModels/Admin.js') : path.resolve('./src/models/coreModels/Admin.ts');
+    const adminPasswordFile = isProduction ? path.resolve('./dist/models/coreModels/AdminPassword.js') : path.resolve('./src/models/coreModels/AdminPassword.ts');
+
+    const AdminModule = (await import(pathToFileURL(adminFile).href)) as any;
+    const Admin = AdminModule?.default || AdminModule;
+    const adminPasswordModule = (await import(pathToFileURL(adminPasswordFile).href)) as any;
+    const AdminPassword = adminPasswordModule?.default || adminPasswordModule;
     const newAdminPassword = new AdminPassword();
 
     const salt = uniqueId();
@@ -36,7 +47,9 @@ async function setupApp() {
 
     console.log('👍 Admin created : Done!');
 
-    const Setting = require('../models/coreModels/Setting');
+    const settingFile = isProduction ? path.resolve('./dist/models/coreModels/Setting.js') : path.resolve('./src/models/coreModels/Setting.ts');
+    const _settingMod = (await import(pathToFileURL(settingFile).href)) as any;
+    const Setting = _settingMod?.default || _settingMod;
 
     const settingFiles = [];
 
@@ -51,8 +64,12 @@ async function setupApp() {
 
     console.log('👍 Settings created : Done!');
 
-    const PaymentMode = require('../models/appModels/PaymentMode');
-    const Taxes = require('../models/appModels/Taxes');
+    const paymentModeFile = isProduction ? path.resolve('./dist/models/appModels/PaymentMode.js') : path.resolve('./src/models/appModels/PaymentMode.ts');
+    const taxesFile = isProduction ? path.resolve('./dist/models/appModels/Taxes.js') : path.resolve('./src/models/appModels/Taxes.ts');
+    const _paymentModeMod = (await import(pathToFileURL(paymentModeFile).href)) as any;
+    const PaymentMode = _paymentModeMod?.default || _paymentModeMod;
+    const _taxesMod = (await import(pathToFileURL(taxesFile).href)) as any;
+    const Taxes = _taxesMod?.default || _taxesMod;
 
     await Taxes.insertMany([{ taxName: 'Tax 0%', taxValue: '0', isDefault: true }]);
     console.log('👍 Taxes created : Done!');

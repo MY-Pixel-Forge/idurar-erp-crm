@@ -1,11 +1,13 @@
 
 import mongoose from 'mongoose';
+import type { Request, Response } from 'express';
 
-const updateProfile = async (userModel, req, res) => {
-  const User = mongoose.model(userModel);
+const updateProfile = async (userModel: string, req: Request, res: Response) => {
+  const User = mongoose.model<any>(userModel);
 
   const reqUserName = userModel.toLowerCase();
-  const userProfile = req[reqUserName];
+  // access user profile injected on the request (middleware)
+  const userProfile = (req as any)[reqUserName] as any;
 
   if (userProfile.email === 'admin@admin.com') {
     return res.status(403).json({
@@ -15,17 +17,18 @@ const updateProfile = async (userModel, req, res) => {
     });
   }
 
-  let updates = req.body.photo
+  const body = (req as any).body || {};
+  const updates = body.photo
     ? {
-      email: req.body.email,
-      name: req.body.name,
-      surname: req.body.surname,
-      photo: req.body.photo,
+      email: body.email,
+      name: body.name,
+      surname: body.surname,
+      photo: body.photo,
     }
     : {
-      email: req.body.email,
-      name: req.body.name,
-      surname: req.body.surname,
+      email: body.email,
+      name: body.name,
+      surname: body.surname,
     };
   // Find document by id and updates with the required fields
   const result = await User.findOneAndUpdate(

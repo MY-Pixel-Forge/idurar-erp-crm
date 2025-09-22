@@ -1,12 +1,13 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import { Request, Response } from 'express';
 
-const Model = mongoose.model('Payment');
-const Invoice = mongoose.model('Invoice');
-const custom = require('@/controllers/pdfController');
+const Model = mongoose.model('Payment') as any;
+const Invoice = mongoose.model('Invoice') as any;
+import custom from '../../pdfController';
 
-const { calculate } = require('@/helpers');
+import { calculate } from '../../../helpers';
 
-const create = async (req, res) => {
+const create = async (req: Request & any, res: Response) => {
   // Creating a new document in the collection
   if (req.body.amount === 0) {
     return res.status(202).json({
@@ -60,8 +61,8 @@ const create = async (req, res) => {
     calculate.sub(total, discount) === calculate.add(credit, amount)
       ? 'paid'
       : calculate.add(credit, amount) > 0
-      ? 'partially'
-      : 'unpaid';
+        ? 'partially'
+        : 'unpaid';
 
   const invoiceUpdate = await Invoice.findOneAndUpdate(
     { _id: req.body.invoice },
@@ -83,4 +84,4 @@ const create = async (req, res) => {
   });
 };
 
-module.exports = create;
+export default create;
